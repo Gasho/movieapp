@@ -9,6 +9,6 @@ def shared_pods
   pod 'SDWebImage'
 end
 
-target 'MovieApp' do
+target 'Movies' do
   shared_pods
 end
