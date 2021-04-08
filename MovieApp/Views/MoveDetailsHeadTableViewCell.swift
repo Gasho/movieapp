@@ -7,12 +7,15 @@
 
 import UIKit
 
+public let posterRatio : CGFloat = 0.666
+
 class MoveDetailsHeadTableViewCell: UITableViewCell, CellIdentifier {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var pageControl: UIPageControl!
     @IBOutlet weak var collectionView: UICollectionView!
     
+    @IBOutlet weak var collectionViewHeightConstraint: NSLayoutConstraint!
     static let identifier = "\(MoveDetailsHeadTableViewCell.self)"
     
     var movie: Movie!  {
@@ -23,6 +26,7 @@ class MoveDetailsHeadTableViewCell: UITableViewCell, CellIdentifier {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        collectionViewHeightConstraint.constant = self.bounds.width
         setupViews()
     }
 
@@ -33,6 +37,12 @@ class MoveDetailsHeadTableViewCell: UITableViewCell, CellIdentifier {
                          bundle: nil)
         self.collectionView!.register(cell,
                                       forCellWithReuseIdentifier: MovieListCollectionViewCell.identifier)
+       
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 5
+        layout.minimumInteritemSpacing = 5
+        collectionView.setCollectionViewLayout(layout, animated: true)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -68,11 +78,12 @@ extension MoveDetailsHeadTableViewCell: UICollectionViewDataSource{
 // MARK: - UICollectionViewDelegateFlowLayout, UICollectionViewDelegate
 extension MoveDetailsHeadTableViewCell: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
+
+        let heightPerItem = collectionView.frame.height
         if indexPath.section == 0 {
-            return CGSize(width: 165, height: 250)
+            return CGSize(width:heightPerItem * posterRatio, height: heightPerItem)
         }else{
-            return CGSize(width: contentView.frame.size.width - 20, height: 250)
+            return CGSize(width: contentView.frame.size.width - 20, height: heightPerItem)
         }
     }
     
@@ -83,9 +94,8 @@ extension MoveDetailsHeadTableViewCell: UICollectionViewDelegateFlowLayout, UICo
     ) -> UIEdgeInsets {
         
         if section == 0 {
-            let totalCellWidth = 165
-            let totalSpacingWidth = 10 * (collectionView.numberOfItems(inSection: 0) - 1)
-            let leftInset = (collectionView.layer.frame.size.width - CGFloat(totalCellWidth + totalSpacingWidth)) / 2
+            let totalCellWidth:CGFloat = collectionView.frame.height * posterRatio
+            let leftInset = (collectionView.bounds.width - CGFloat(totalCellWidth + 10.0)) / 2
             let rightInset = leftInset
             return UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset)
         }else{

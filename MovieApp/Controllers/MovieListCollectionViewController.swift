@@ -18,12 +18,6 @@ final class MovieListCollectionViewController: UIViewController, Storyboarded {
     private var currentPage = 1
     private var pageNumber = 1
     private var isLoadingMoreData = false
-    private let sectionInsets = UIEdgeInsets(
-        top: 20.0,
-        left: 20.0,
-        bottom: 20.0,
-        right: 20.0
-    )
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +33,12 @@ final class MovieListCollectionViewController: UIViewController, Storyboarded {
                          bundle: nil)
         self.collectionView!.register(cell,
                                       forCellWithReuseIdentifier: MovieListCollectionViewCell.identifier)
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical //.horizontal
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 20
+        collectionView.setCollectionViewLayout(layout, animated: true)
     }
     
     private func fetchMovies(forPage: Int = 1){
@@ -100,5 +100,18 @@ extension MovieListCollectionViewController: UICollectionViewDataSourcePrefetchi
                 break
             }
         }
+    }
+}
+// MARK: - UICollectionViewDelegateFlowLayout
+extension MovieListCollectionViewController: UICollectionViewDelegateFlowLayout{
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 10.0, left: 10.0, bottom: 10.0, right: 10.0)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let lay = collectionViewLayout as! UICollectionViewFlowLayout
+        let widthPerItem = collectionView.frame.width / 2 - lay.minimumInteritemSpacing
+        return CGSize(width:widthPerItem, height: widthPerItem/0.666)
     }
 }
